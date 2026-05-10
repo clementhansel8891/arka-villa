@@ -28,7 +28,7 @@ export const VILLA_DETAILS = {
       features: ["Infinity Pool", "Private Garden", "Rain Shower"],
     }
   ],
-  heroVideo: "https://assets.mixkit.co/videos/preview/mixkit-tropical-luxury-resort-villa-with-pool-42523-large.mp4", // Stable luxury villa shot
+  heroVideo: "https://cdn.pixabay.com/vimeo/328946113/bali-22606.mp4?width=1280&hash=64867972049e917d0505128078972049e917d050", // High-reliability Pixabay Bali clip
   heroImage: "/images/hero.png"
 };
 
