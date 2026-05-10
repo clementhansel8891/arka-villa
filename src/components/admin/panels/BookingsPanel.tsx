@@ -12,13 +12,13 @@ type Booking = {
 };
 
 const INITIAL_BOOKINGS: Booking[] = [
-  { id: "HH-0241", guest: "James Whitmore", email: "j.whitmore@email.com", suite: "Royal Heritage Suite", checkIn: "2026-05-18", checkOut: "2026-05-23", nights: 5, guests: 2, value: 6000, status: "Confirmed" },
-  { id: "HH-0242", guest: "Yuki Tanaka", email: "yuki.t@email.com", suite: "Jungle Horizon Villa", checkIn: "2026-05-20", checkOut: "2026-05-23", nights: 3, guests: 2, value: 2850, status: "Pending", specialRequests: "Vegetarian meals" },
-  { id: "HH-0243", guest: "Maria Santos", email: "msantos@email.com", suite: "Sacred Lotus Pavilion", checkIn: "2026-05-22", checkOut: "2026-05-29", nights: 7, guests: 1, value: 5250, status: "Confirmed", specialRequests: "Early check-in" },
-  { id: "HH-0244", guest: "Ravi Mehta", email: "r.mehta@email.com", suite: "Royal Heritage Suite", checkIn: "2026-05-25", checkOut: "2026-05-29", nights: 4, guests: 2, value: 4800, status: "Confirmed" },
-  { id: "HH-0245", guest: "Chloe Dupont", email: "cdupont@email.com", suite: "Jungle Horizon Villa", checkIn: "2026-05-28", checkOut: "2026-05-30", nights: 2, guests: 2, value: 1900, status: "Pending" },
-  { id: "HH-0238", guest: "Aiko Sato", email: "aiko.sato@email.com", suite: "Sacred Lotus Pavilion", checkIn: "2026-05-10", checkOut: "2026-05-15", nights: 5, guests: 1, value: 3750, status: "Completed" },
-  { id: "HH-0230", guest: "Sophie Laurent", email: "slaurent@email.com", suite: "Jungle Horizon Villa", checkIn: "2026-04-20", checkOut: "2026-04-23", nights: 3, guests: 2, value: 2850, status: "Cancelled" },
+  { id: "AV-0241", guest: "James Whitmore", email: "j.whitmore@email.com", suite: "Royal Heritage Suite", checkIn: "2026-05-18", checkOut: "2026-05-23", nights: 5, guests: 2, value: 6000, status: "Confirmed" },
+  { id: "AV-0242", guest: "Yuki Tanaka", email: "yuki.t@email.com", suite: "Jungle Horizon Villa", checkIn: "2026-05-20", checkOut: "2026-05-23", nights: 3, guests: 2, value: 2850, status: "Pending", specialRequests: "Vegetarian meals" },
+  { id: "AV-0243", guest: "Maria Santos", email: "msantos@email.com", suite: "Sacred Lotus Pavilion", checkIn: "2026-05-22", checkOut: "2026-05-29", nights: 7, guests: 1, value: 5250, status: "Confirmed", specialRequests: "Early check-in" },
+  { id: "AV-0244", guest: "Ravi Mehta", email: "r.mehta@email.com", suite: "Royal Heritage Suite", checkIn: "2026-05-25", checkOut: "2026-05-29", nights: 4, guests: 2, value: 4800, status: "Confirmed" },
+  { id: "AV-0245", guest: "Chloe Dupont", email: "cdupont@email.com", suite: "Jungle Horizon Villa", checkIn: "2026-05-28", checkOut: "2026-05-30", nights: 2, guests: 2, value: 1900, status: "Pending" },
+  { id: "AV-0238", guest: "Aiko Sato", email: "aiko.sato@email.com", suite: "Sacred Lotus Pavilion", checkIn: "2026-05-10", checkOut: "2026-05-15", nights: 5, guests: 1, value: 3750, status: "Completed" },
+  { id: "AV-0230", guest: "Sophie Laurent", email: "slaurent@email.com", suite: "Jungle Horizon Villa", checkIn: "2024-04-20", checkOut: "2024-04-23", nights: 3, guests: 2, value: 2850, status: "Cancelled" },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -47,21 +47,26 @@ export default function BookingsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* Header & Controls */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
           <h2 className="text-white font-serif text-2xl">Bookings</h2>
           <p className="text-white/30 text-xs mt-1">{bookings.length} total · {bookings.filter(b => b.status === "Pending").length} pending</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <div className="relative">
+
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search */}
+          <div className="relative w-full md:w-64">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
             <input type="text" placeholder="Search guest or ID..." value={search} onChange={(e) => setSearch(e.target.value)}
-              className="bg-white/5 border border-white/10 text-white text-sm pl-9 pr-4 py-2 focus:outline-none focus:border-heritage-gold/40 w-48 placeholder:text-white/20" />
+              className="w-full bg-white/5 border border-white/10 text-white text-sm pl-9 pr-4 py-2.5 focus:outline-none focus:border-heritage-gold/40 placeholder:text-white/20" />
           </div>
-          <div className="flex">
+
+          {/* Tabs - Scrollable on mobile */}
+          <div className="flex overflow-x-auto scrollbar-hide border border-white/10 bg-white/5">
             {["All", "Confirmed", "Pending", "Completed", "Cancelled"].map((s) => (
               <button key={s} onClick={() => setFilterStatus(s)}
-                className={`px-3 py-2 text-xs uppercase tracking-wider border-y border-r first:border-l transition-colors ${filterStatus === s ? "bg-heritage-gold/10 text-heritage-gold border-heritage-gold/30" : "border-white/10 text-white/30 hover:text-white/60"}`}>
+                className={`px-4 py-2.5 text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap border-r border-white/10 last:border-r-0 ${filterStatus === s ? "bg-heritage-gold/20 text-heritage-gold font-bold" : "text-white/30 hover:text-white/60"}`}>
                 {s}
               </button>
             ))}
@@ -69,12 +74,13 @@ export default function BookingsPanel() {
         </div>
       </div>
 
-      <div className="bg-white/3 border border-white/5 overflow-hidden">
-        <table className="w-full">
+      {/* Table */}
+      <div className="bg-white/3 border border-white/5 overflow-x-auto">
+        <table className="w-full min-w-[600px]">
           <thead>
             <tr className="text-white/25 text-[10px] uppercase tracking-widest border-b border-white/5">
-              {["Booking ID","Guest","Suite","Check-In","Nights","Value","Status","Actions"].map((h, i) => (
-                <th key={h} className={`${i >= 5 ? "text-right" : "text-left"} px-5 py-4 font-normal ${i === 2 ? "hidden lg:table-cell" : i === 3 || i === 4 ? "hidden md:table-cell" : ""}`}>{h}</th>
+              {["Booking ID","Guest","Suite","Check-In","Value","Status","Actions"].map((h, i) => (
+                <th key={h} className={`${i >= 4 ? "text-right" : "text-left"} px-5 py-4 font-normal ${i === 2 ? "hidden lg:table-cell" : i === 3 ? "hidden md:table-cell" : ""}`}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -85,7 +91,6 @@ export default function BookingsPanel() {
                 <td className="px-5 py-4"><p className="text-white text-sm">{b.guest}</p><p className="text-white/30 text-xs">{b.email}</p></td>
                 <td className="px-5 py-4 text-white/50 text-xs hidden lg:table-cell">{b.suite}</td>
                 <td className="px-5 py-4 text-white/50 text-xs hidden md:table-cell">{b.checkIn}</td>
-                <td className="px-5 py-4 text-white/50 text-xs hidden md:table-cell">{b.nights}n</td>
                 <td className="px-5 py-4 text-right text-white text-sm font-serif">${b.value.toLocaleString()}</td>
                 <td className="px-5 py-4 text-right"><span className={`text-[10px] uppercase tracking-widest px-2 py-1 ${STATUS_COLORS[b.status]}`}>{b.status}</span></td>
                 <td className="px-5 py-4">
@@ -107,7 +112,7 @@ export default function BookingsPanel() {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40" onClick={() => setSelected(null)} />
             <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed right-0 top-0 h-full w-96 bg-[#0E0E0E] border-l border-white/10 z-50 overflow-y-auto p-8">
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-[#0E0E0E] border-l border-white/10 z-50 overflow-y-auto p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-white font-serif text-xl">{selected.id}</h3>
                 <button onClick={() => setSelected(null)} className="text-white/30 hover:text-white"><X size={20} /></button>

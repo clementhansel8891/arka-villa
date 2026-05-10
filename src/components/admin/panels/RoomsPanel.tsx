@@ -18,22 +18,24 @@ const STATUS_STYLES: Record<string, string> = {
 export default function RoomsPanel() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-white font-serif text-2xl">Room Management</h2>
           <p className="text-white/30 text-xs mt-1">3 suites · 1 available · 1 occupied · 1 maintenance</p>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        
+        {/* Status Quick Stats - Scrollable on mobile */}
+        <div className="flex overflow-x-auto scrollbar-hide gap-3 pb-1">
           {[["Available", "1", "emerald"], ["Occupied", "1", "heritage-gold"], ["Maintenance", "1", "red"]].map(([label, count, color]) => (
-            <div key={label as string} className="bg-white/3 border border-white/5 px-4 py-3 text-center">
-              <p className={`text-xl font-serif text-${color}-400`}>{count}</p>
+            <div key={label as string} className="bg-white/3 border border-white/5 px-6 py-3 text-center min-w-[100px] flex-shrink-0">
+              <p className={`text-xl font-serif ${color === "emerald" ? "text-emerald-400" : color === "red" ? "text-red-400" : "text-heritage-gold"}`}>{count}</p>
               <p className="text-white/30 text-[10px] uppercase tracking-wider mt-0.5">{label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {ROOMS.map((room, i) => (
           <motion.div key={room.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
             className="bg-white/3 border border-white/5 hover:border-white/10 transition-colors overflow-hidden">
@@ -47,38 +49,39 @@ export default function RoomsPanel() {
 
               {/* Info */}
               <div className="p-6 md:col-span-2">
-                <p className="text-heritage-gold text-[10px] uppercase tracking-widest mb-2">{room.type} · {room.sqm}m²</p>
+                <div className="flex justify-between items-start mb-2">
+                  <p className="text-heritage-gold text-[10px] uppercase tracking-widest">{room.type} · {room.sqm}m²</p>
+                </div>
                 <h3 className="text-white font-serif text-xl mb-3">{room.name}</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-6">
                   {room.features.map((f) => (
-                    <span key={f} className="text-white/40 text-[10px] uppercase tracking-wider border border-white/10 px-2 py-1">{f}</span>
+                    <span key={f} className="text-white/30 text-[9px] uppercase tracking-wider border border-white/10 px-2 py-1 whitespace-nowrap">{f}</span>
                   ))}
                 </div>
-                <div className="flex items-center gap-6 text-xs text-white/40">
-                  <span className="flex items-center gap-1.5"><BedDouble size={12} />{room.guests} guests max</span>
-                  <span className="flex items-center gap-1.5"><Waves size={12} />Pool access</span>
-                  <span className="flex items-center gap-1.5"><Droplets size={12} />Private bath</span>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[10px] uppercase tracking-widest text-white/40">
+                  <span className="flex items-center gap-2"><BedDouble size={12} className="text-heritage-gold/50" />{room.guests} guests max</span>
+                  <span className="flex items-center gap-2"><Waves size={12} className="text-heritage-gold/50" />Pool access</span>
+                  <span className="flex items-center gap-2"><Droplets size={12} className="text-heritage-gold/50" />Private bath</span>
                 </div>
               </div>
 
               {/* Stats */}
-              <div className="p-6 border-t md:border-t-0 md:border-l border-white/5 flex flex-col justify-between">
+              <div className="p-6 border-t md:border-t-0 md:border-l border-white/5 flex flex-col justify-between bg-white/[0.01]">
                 <div>
                   <p className="text-white/30 text-[10px] uppercase tracking-widest mb-1">Nightly Rate</p>
                   <p className="text-heritage-gold font-serif text-2xl">${room.price}</p>
-                  <p className="text-white/20 text-xs mt-0.5">per night</p>
                 </div>
-                <div className="space-y-3 mt-4">
+                <div className="space-y-4 mt-6 md:mt-0">
                   <div>
-                    <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-white/30">Occupancy Rate</span>
+                    <div className="flex justify-between text-[10px] uppercase tracking-widest mb-1.5">
+                      <span className="text-white/30">Occupancy</span>
                       <span className="text-white">{room.occupancyRate}%</span>
                     </div>
-                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                       <motion.div className="h-full bg-heritage-gold rounded-full" initial={{ width: 0 }} animate={{ width: `${room.occupancyRate}%` }} transition={{ duration: 0.8, delay: 0.3 + i * 0.1 }} />
                     </div>
                   </div>
-                  <div className="flex justify-between text-xs">
+                  <div className="flex justify-between text-[10px] uppercase tracking-widest">
                     <span className="text-white/30">Next Available</span>
                     <span className={room.status === "Available" ? "text-emerald-400" : "text-white/60"}>{room.nextAvailable}</span>
                   </div>
