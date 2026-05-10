@@ -15,8 +15,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Arka Villa | Ultra-Luxury Bali Villa",
-  description: "Experience modern Balinese heritage in our exclusive luxury villa in Ubud.",
+  title: "Arka Villa | Ultra-Luxury Bali Villa in Ubud",
+  description: "Experience the soul of Bali at Arka Villa — an ultra-exclusive luxury sanctuary in the heart of Ubud.",
 };
 
 export default function RootLayout({

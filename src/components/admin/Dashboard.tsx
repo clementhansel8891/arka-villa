@@ -25,8 +25,8 @@ const NAV_ITEMS = [
 
 const PANEL_TITLES: Record<string, string> = {
   overview: "Performance Overview",
-  bookings: "Bookings",
-  rooms: "Rooms",
+  bookings: "Bookings Manager",
+  rooms: "Room Management",
   guests: "Guest Registry",
   staff: "Staff Management",
   reviews: "Guest Reviews",
@@ -38,9 +38,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notifications] = useState(3);
 
-  // Auth guard
   useEffect(() => {
     if (!user) { router.push("/login"); return; }
     if (user.role === "guest") { router.push("/profile"); }
@@ -72,16 +70,19 @@ export default function Dashboard() {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`
-        fixed lg:relative z-30 h-full w-64 flex-shrink-0 border-r border-white/5 flex flex-col
-        bg-[#0A0A0A] transition-transform duration-300
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-      `}>
+      <aside className={`fixed lg:relative z-30 h-full w-64 flex-shrink-0 border-r border-white/5 flex flex-col bg-[#0A0A0A] transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
         {/* Brand */}
         <div className="p-6 border-b border-white/5">
-          <p className="text-heritage-gold font-serif text-lg leading-none">Arka Villa</p>
+          <p className="text-heritage-gold font-serif text-xl leading-none">Arka Villa</p>
           <p className="text-white/30 text-[10px] uppercase tracking-widest mt-1">Admin Console</p>
         </div>
+
+        {/* Back to Site — prominent */}
+        <button onClick={() => router.push("/")}
+          className="flex items-center gap-3 px-6 py-3 text-xs text-white/40 hover:text-heritage-gold hover:bg-heritage-gold/5 transition-all duration-200 border-b border-white/5 group">
+          <Home size={13} className="group-hover:text-heritage-gold" />
+          <span className="uppercase tracking-widest">← Back to Site</span>
+        </button>
 
         {/* User */}
         <div className="px-4 py-4 border-b border-white/5">
@@ -91,7 +92,7 @@ export default function Dashboard() {
             </div>
             <div className="min-w-0">
               <p className="text-white text-sm truncate">{user.name}</p>
-              <p className="text-heritage-gold text-[10px] uppercase tracking-wider capitalize">{user.role}</p>
+              <p className="text-heritage-gold text-[10px] uppercase tracking-wider capitalize">{user.position ?? user.role}</p>
             </div>
           </div>
         </div>
@@ -99,55 +100,43 @@ export default function Dashboard() {
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
           {NAV_ITEMS.map(({ icon: Icon, label, id }) => {
-            // Staff see subset of nav
             if (user.role === "staff" && ["staff", "settings"].includes(id)) return null;
             return (
               <button key={id} onClick={() => { setActiveNav(id); setSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 ${
-                  activeNav === id
-                    ? "bg-heritage-gold/10 text-heritage-gold border-l-2 border-heritage-gold"
-                    : "text-white/40 hover:text-white/70 hover:bg-white/3 border-l-2 border-transparent"
-                }`}>
-                <Icon size={15} />
-                {label}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 ${activeNav === id ? "bg-heritage-gold/10 text-heritage-gold border-l-2 border-heritage-gold" : "text-white/40 hover:text-white/70 hover:bg-white/3 border-l-2 border-transparent"}`}>
+                <Icon size={15} />{label}
                 {activeNav === id && <ChevronRight size={12} className="ml-auto opacity-50" />}
               </button>
             );
           })}
         </nav>
 
-        {/* Bottom */}
-        <div className="p-3 border-t border-white/5 space-y-0.5">
-          <button onClick={() => router.push("/")} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white/30 hover:text-white/60 transition-colors">
-            ← Back to Site
-          </button>
+        {/* Sign Out */}
+        <div className="p-3 border-t border-white/5">
           <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400/50 hover:text-red-400 hover:bg-red-400/5 transition-colors">
             <LogOut size={15} />Sign Out
           </button>
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main */}
       <div className="flex-1 overflow-y-auto min-w-0">
         {/* Topbar */}
         <header className="sticky top-0 z-10 bg-[#0E0E0E]/90 backdrop-blur border-b border-white/5 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button className="lg:hidden text-white/40 hover:text-white" onClick={() => setSidebarOpen(true)}>
-              <Menu size={20} />
-            </button>
+            <button className="lg:hidden text-white/40 hover:text-white" onClick={() => setSidebarOpen(true)}><Menu size={20} /></button>
             <div>
               <h1 className="text-lg font-serif text-white">{PANEL_TITLES[activeNav]}</h1>
-              <p className="text-white/30 text-xs mt-0.5">May 2026 · Live Data</p>
+              <p className="text-white/30 text-xs mt-0.5">Arka Villa · May 2026</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <button onClick={() => router.push("/")} className="hidden md:flex items-center gap-2 text-white/30 hover:text-white/70 text-xs uppercase tracking-widest transition-colors border border-white/10 hover:border-white/30 px-3 py-1.5">
+              <Home size={12} />Home
+            </button>
             <button className="relative p-2 text-white/40 hover:text-white transition-colors">
               <Bell size={17} />
-              {notifications > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-heritage-gold rounded-full flex items-center justify-center text-heritage-charcoal text-[9px] font-bold">
-                  {notifications}
-                </span>
-              )}
+              <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-heritage-gold rounded-full flex items-center justify-center text-heritage-charcoal text-[9px] font-bold">3</span>
             </button>
             <div className="w-8 h-8 rounded-full bg-heritage-gold/20 border border-heritage-gold/30 flex items-center justify-center text-heritage-gold text-xs font-bold">
               {user.name.charAt(0)}

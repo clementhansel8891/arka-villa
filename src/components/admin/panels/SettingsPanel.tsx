@@ -6,7 +6,12 @@ import { Save, Check } from "lucide-react";
 
 export default function SettingsPanel() {
   const [saved, setSaved] = useState(false);
-  const [villa, setVilla] = useState({ name: "Arka Villa", tagline: "Where Ancient Bali Meets Modern Luxury", location: "Jl. Raya Ubud No. 1, Ubud, Gianyar, Bali 80571, Indonesia", phone: "+62 812 3456 7890", email: "concierge@heritagehaven.com", checkIn: "14:00", checkOut: "12:00", currency: "USD" });
+  const [villa, setVilla] = useState({
+    name: "Arka Villa", tagline: "Where Ancient Bali Meets Modern Luxury",
+    location: "Jl. Raya Ubud No. 1, Ubud, Gianyar, Bali 80571, Indonesia",
+    phone: "+62 812 3456 7890", email: "concierge@arkavilla.com",
+    checkIn: "14:00", checkOut: "12:00", currency: "USD",
+  });
   const [pricing, setPricing] = useState({ royalSuite: 1200, jungleVilla: 950, lotusLounge: 750, taxRate: 11, serviceFee: 8 });
   const [notif, setNotif] = useState({ newBooking: true, cancelBooking: true, newReview: true, lowOccupancy: false, weeklyReport: true });
 
@@ -23,7 +28,7 @@ export default function SettingsPanel() {
   return (
     <form onSubmit={handleSave} className="space-y-8 max-w-3xl">
       <div className="flex items-center justify-between">
-        <div><h2 className="text-white font-serif text-2xl">Settings</h2><p className="text-white/30 text-xs mt-1">Villa configuration and notifications</p></div>
+        <div><h2 className="text-white font-serif text-2xl">Settings</h2><p className="text-white/30 text-xs mt-1">Arka Villa configuration and notifications</p></div>
         <motion.button type="submit" whileTap={{ scale: 0.97 }}
           className={`flex items-center gap-2 px-6 py-3 text-xs uppercase tracking-widest font-bold transition-all duration-300 ${saved ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-heritage-gold text-heritage-charcoal hover:bg-white"}`}>
           {saved ? <><Check size={14} /> Saved</> : <><Save size={14} /> Save Changes</>}
@@ -47,7 +52,7 @@ export default function SettingsPanel() {
           <div><Label>Check-Out Time</Label><input type="time" value={villa.checkOut} onChange={(e) => setVilla({ ...villa, checkOut: e.target.value })} className={inputCls} /></div>
           <div><Label>Currency</Label>
             <select value={villa.currency} onChange={(e) => setVilla({ ...villa, currency: e.target.value })} className={`${inputCls} cursor-pointer`}>
-              {["USD","EUR","SGD","AUD","GBP"].map((c) => <option key={c}>{c}</option>)}
+              {["USD","EUR","SGD","AUD","GBP","IDR"].map((c) => <option key={c}>{c}</option>)}
             </select>
           </div>
         </div>
@@ -59,7 +64,7 @@ export default function SettingsPanel() {
         <div className="grid grid-cols-3 gap-4">
           {[["Royal Heritage Suite", "royalSuite"], ["Jungle Horizon Villa", "jungleVilla"], ["Sacred Lotus Pavilion", "lotusLounge"]].map(([label, key]) => (
             <div key={key as string}><Label>{label} ($/night)</Label>
-              <input type="number" min={0} value={pricing[key as keyof typeof pricing]} onChange={(e) => setPricing({ ...pricing, [key]: Number(e.target.value) })} className={inputCls} />
+              <input type="number" min={0} value={pricing[key as keyof typeof pricing]} onChange={(e) => setPricing({ ...pricing, [key as string]: Number(e.target.value) })} className={inputCls} />
             </div>
           ))}
         </div>
@@ -68,7 +73,7 @@ export default function SettingsPanel() {
           <div><Label>Service Fee (%)</Label><input type="number" min={0} max={100} value={pricing.serviceFee} onChange={(e) => setPricing({ ...pricing, serviceFee: Number(e.target.value) })} className={inputCls} /></div>
         </div>
         <div className="bg-heritage-gold/5 border border-heritage-gold/20 p-4">
-          <p className="text-heritage-gold text-[10px] uppercase tracking-widest mb-2">Effective Rate Example — Royal Suite, 3 nights</p>
+          <p className="text-heritage-gold text-[10px] uppercase tracking-widest mb-2">Effective Rate — Royal Suite, 3 nights</p>
           <p className="text-white text-sm">
             Base: <span className="text-white/60">${(pricing.royalSuite * 3).toLocaleString()}</span>
             {" "}+ Tax: <span className="text-white/60">${((pricing.royalSuite * 3) * pricing.taxRate / 100).toFixed(0)}</span>
@@ -85,21 +90,32 @@ export default function SettingsPanel() {
           {[
             ["newBooking", "New Booking Received", "Alert when a new reservation is submitted"],
             ["cancelBooking", "Booking Cancellation", "Alert when a guest cancels their booking"],
-            ["newReview", "New Guest Review", "Alert when a review is posted"],
+            ["newReview", "New Guest Review", "Alert when a review is posted on any platform"],
             ["lowOccupancy", "Low Occupancy Warning", "Alert when occupancy drops below 70%"],
             ["weeklyReport", "Weekly Performance Report", "Receive a weekly email digest every Monday"],
           ].map(([key, title, desc]) => (
             <div key={key as string} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-              <div>
-                <p className="text-white text-sm">{title as string}</p>
-                <p className="text-white/30 text-xs mt-0.5">{desc as string}</p>
-              </div>
+              <div><p className="text-white text-sm">{title as string}</p><p className="text-white/30 text-xs mt-0.5">{desc as string}</p></div>
               <button type="button" onClick={() => setNotif({ ...notif, [key as string]: !notif[key as keyof typeof notif] })}
                 className={`relative w-11 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${notif[key as keyof typeof notif] ? "bg-heritage-gold" : "bg-white/10"}`}>
                 <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${notif[key as keyof typeof notif] ? "translate-x-6" : "translate-x-1"}`} />
               </button>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Danger Zone */}
+      <section className="bg-red-500/5 border border-red-500/20 p-6">
+        <h3 className="text-red-400 font-serif text-lg mb-2">Danger Zone</h3>
+        <p className="text-white/30 text-sm mb-5">These actions are irreversible. Proceed with caution.</p>
+        <div className="flex gap-3">
+          <button type="button" className="px-5 py-2.5 border border-red-500/30 text-red-400/70 text-xs uppercase tracking-widest hover:bg-red-500/10 hover:text-red-400 transition-colors">
+            Clear All Demo Data
+          </button>
+          <button type="button" className="px-5 py-2.5 border border-red-500/30 text-red-400/70 text-xs uppercase tracking-widest hover:bg-red-500/10 hover:text-red-400 transition-colors">
+            Reset to Defaults
+          </button>
         </div>
       </section>
     </form>

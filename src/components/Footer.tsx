@@ -45,7 +45,7 @@ export default function Footer() {
           <ul className="space-y-4 text-sm font-light text-white/60">
             <li className="flex items-center gap-3"><MapPin size={16} className="text-heritage-gold" /> Ubud, Bali, Indonesia</li>
             <li className="flex items-center gap-3"><Phone size={16} className="text-heritage-gold" /> +62 812 3456 7890</li>
-            <li className="flex items-center gap-3"><Mail size={16} className="text-heritage-gold" /> concierge@heritagehaven.com</li>
+            <li className="flex items-center gap-3"><Mail size={16} className="text-heritage-gold" /> concierge@arkavilla.com</li>
           </ul>
         </div>
 

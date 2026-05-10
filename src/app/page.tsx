@@ -19,7 +19,7 @@ export default function Home() {
             "We do not inherit the earth from our ancestors; we borrow it from our children."
           </p>
           <div className="mt-8 h-px w-20 bg-heritage-gold mx-auto"></div>
-          <p className="mt-4 text-xs uppercase tracking-[0.4em] text-heritage-gold font-bold">The Heritage Philosophy</p>
+          <p className="mt-4 text-xs uppercase tracking-[0.4em] text-heritage-gold font-bold">The Arka Philosophy</p>
         </div>
       </section>
 

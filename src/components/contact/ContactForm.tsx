@@ -14,13 +14,13 @@ const CONTACT_DETAILS = [
     icon: Phone,
     label: "WhatsApp Concierge",
     value: "+62 812 3456 7890",
-    href: "https://wa.me/6281234567890?text=Hello%2C%20I%27d%20like%20to%20enquire%20about%20Heritage%20Haven.",
+    href: "https://wa.me/6281234567890?text=Hello%2C%20I%27d%20like%20to%20enquire%20about%20Arka%20Villa.",
   },
   {
     icon: Mail,
     label: "Email",
-    value: "concierge@heritagehaven.com",
-    href: "mailto:concierge@heritagehaven.com",
+    value: "concierge@arkavilla.com",
+    href: "mailto:concierge@arkavilla.com",
   },
 ];
 

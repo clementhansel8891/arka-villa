@@ -32,7 +32,7 @@ export default function WhatsAppFloat() {
               </div>
             </div>
             <p className="text-heritage-charcoal/70 text-sm font-light mb-5 leading-relaxed">
-              Welcome! How may our concierge team assist you today? We typically reply within minutes.
+              Om Swastiastu. Welcome to Arka Villa. How may our concierge assist your stay today?
             </p>
             <a
               href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}

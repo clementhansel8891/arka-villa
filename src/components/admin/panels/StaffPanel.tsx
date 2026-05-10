@@ -150,7 +150,7 @@ function AddStaffModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
               <div><label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">Full Name *</label>
                 <input type="text" required placeholder="Nyoman Wijaya" value={form.name} onChange={set("name")} className={inputCls} /></div>
               <div><label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">Email *</label>
-                <input type="email" required placeholder="nyoman@heritagehaven.com" value={form.email} onChange={set("email")} className={inputCls} /></div>
+                <input type="email" required placeholder="nyoman@arkavilla.com" value={form.email} onChange={set("email")} className={inputCls} /></div>
             </div>
             <div><label className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">Temporary Password *</label>
               <div className="relative">
