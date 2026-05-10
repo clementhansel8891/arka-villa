@@ -12,15 +12,20 @@ export default function Hero() {
   const { scrollY } = useScroll();
   
   // Parallax effects
-  const videoY = useTransform(scrollY, [0, 1000], [0, 400]);
-  const textY = useTransform(scrollY, [0, 1000], [0, -150]);
+  const videoY = useTransform(scrollY, [0, 1000], [0, 300]);
+  const textY = useTransform(scrollY, [0, 1000], [0, -100]);
   const opacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
+    // Force play on mount to ensure browsers don't block it
     if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.error("Video autoplay failed:", error);
-      });
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Auto-play was prevented
+          console.log("Autoplay prevented, retrying...");
+        });
+      }
     }
   }, []);
 
@@ -36,46 +41,48 @@ export default function Hero() {
           loop
           playsInline
           onLoadedData={() => setVideoLoaded(true)}
-          className={`h-full w-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-70' : 'opacity-0'}`}
+          poster="/images/hero.png"
+          className={`h-full w-full object-cover transition-opacity duration-1500 ${videoLoaded ? 'opacity-85' : 'opacity-0'}`}
         >
           <source src={VILLA_DETAILS.heroVideo} type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
         
         {/* Cinematic Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-heritage-charcoal/90 via-transparent to-heritage-charcoal pointer-events-none" />
-        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-heritage-charcoal/95 via-transparent to-heritage-charcoal pointer-events-none" />
+        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       </motion.div>
 
       {/* Content */}
       <motion.div 
         style={{ y: textY, opacity }}
-        className="relative z-10 text-center px-6 max-w-5xl pointer-events-none"
+        className="relative z-10 text-center px-6 max-w-7xl pointer-events-none"
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mb-6"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+          className="mb-8"
         >
-          <span className="text-heritage-gold uppercase tracking-[0.5em] text-[10px] md:text-xs font-bold bg-white/5 backdrop-blur-md px-4 py-2 border border-white/10 rounded-full">
+          <span className="text-heritage-gold uppercase tracking-[0.6em] text-[10px] md:text-xs font-bold px-6 py-2.5 border border-heritage-gold/30 rounded-none bg-heritage-charcoal/40 backdrop-blur-md">
             {VILLA_DETAILS.location}
           </span>
         </motion.div>
         
-        <h1 className="text-5xl md:text-[7.5rem] font-serif text-white mb-8 leading-[0.85] tracking-tighter">
+        <h1 className="text-6xl md:text-[8.5rem] font-serif text-white mb-10 leading-[0.8] tracking-tighter">
           <motion.span
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="block"
           >
             Where Heritage
           </motion.span>
           <motion.span
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="block italic text-heritage-gold mt-2"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
+            className="block italic text-heritage-gold mt-4"
           >
             Meets Horizon
           </motion.span>
@@ -84,13 +91,13 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 1.6 }}
-          className="flex flex-col items-center gap-6"
+          transition={{ duration: 2.5, delay: 1.8 }}
+          className="flex flex-col items-center gap-8"
         >
-          <div className="h-px w-24 bg-heritage-gold/50" />
-          <p className="text-white/40 font-light text-sm md:text-base max-w-md mx-auto leading-relaxed tracking-[0.2em] uppercase">
-            An ultra-exclusive luxury sanctuary <br className="hidden md:block" /> 
-            preserving the soul of Ubud.
+          <div className="h-px w-32 bg-heritage-gold/40" />
+          <p className="text-white/50 font-light text-sm md:text-base max-w-lg mx-auto leading-relaxed tracking-[0.25em] uppercase">
+            Experience the soul of Bali <br className="hidden md:block" /> 
+            in an ultra-exclusive sanctuary.
           </p>
         </motion.div>
       </motion.div>
@@ -99,25 +106,24 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 2.8 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 group cursor-pointer pointer-events-auto"
+        transition={{ duration: 1, delay: 3 }}
+        className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-5 group cursor-pointer pointer-events-auto"
         onClick={() => {
           document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
         }}
       >
-        <span className="text-white/20 text-[9px] uppercase tracking-[0.6em] group-hover:text-heritage-gold transition-colors duration-500">Discover More</span>
-        <div className="relative w-px h-20 bg-white/10 overflow-hidden">
+        <span className="text-white/30 text-[9px] uppercase tracking-[0.7em] group-hover:text-heritage-gold transition-colors duration-500">The Experience</span>
+        <div className="relative w-px h-24 bg-white/5 overflow-hidden">
           <motion.div 
-            animate={{ y: [-80, 80] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+            animate={{ y: [-96, 96] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-heritage-gold to-transparent"
           />
         </div>
       </motion.div>
 
-      {/* Cinematic corner accents */}
-      <div className="absolute top-10 left-10 w-20 h-20 border-t border-l border-white/5 pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-20 h-20 border-b border-r border-white/5 pointer-events-none" />
+      {/* Frame accents */}
+      <div className="absolute inset-12 border border-white/5 pointer-events-none hidden md:block" />
     </section>
   );
 }

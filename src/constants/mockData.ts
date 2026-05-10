@@ -28,7 +28,7 @@ export const VILLA_DETAILS = {
       features: ["Infinity Pool", "Private Garden", "Rain Shower"],
     }
   ],
-  heroVideo: "https://cdn.pixabay.com/vimeo/328946113/bali-22606.mp4?width=1280&hash=64867972049e917d0505128078972049e917d050", // High-reliability Pixabay Bali clip
+  heroVideo: "https://v.pexels.com/video-files/3125833/3125833-hd_1920_1080_25fps.mp4", // Real luxury Bali villa drone shot
   heroImage: "/images/hero.png"
 };
 
