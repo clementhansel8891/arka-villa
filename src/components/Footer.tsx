@@ -33,7 +33,7 @@ export default function Footer() {
           <h4 className="text-sm uppercase tracking-widest font-bold mb-6 text-white/40">Navigation</h4>
           <ul className="space-y-4 text-sm font-light">
             <li><Link href="/the-villa" className="hover:text-heritage-gold transition-colors">The Villa</Link></li>
-            <li><Link href="/#amenities" className="hover:text-heritage-gold transition-colors">Amenities</Link></li>
+            <li><Link href="/amenities" className="hover:text-heritage-gold transition-colors">Amenities</Link></li>
             <li><Link href="/booking" className="hover:text-heritage-gold transition-colors">Reservations</Link></li>
             <li><Link href="/contact" className="hover:text-heritage-gold transition-colors">Contact</Link></li>
           </ul>

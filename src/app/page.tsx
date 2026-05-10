@@ -4,6 +4,7 @@ import Narrative from "@/components/Narrative";
 import Amenities from "@/components/Amenities";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import Link from "next/link";
 import { VILLA_DETAILS } from "@/constants/mockData";
 
 export default function Home() {
@@ -34,14 +35,14 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-serif text-heritage-charcoal mb-4">The Sanctuary Collection</h2>
               <p className="text-heritage-charcoal/60 font-light text-lg">Meticulously designed spaces that blend ancestral textures with contemporary luxury.</p>
             </div>
-            <button className="bg-heritage-charcoal text-white px-8 py-3 uppercase tracking-widest text-sm font-bold hover:bg-heritage-gold transition-all duration-300">
+            <Link href="/the-villa" className="bg-heritage-charcoal text-white px-8 py-3 uppercase tracking-widest text-sm font-bold hover:bg-heritage-gold transition-all duration-300">
               View All Suites
-            </button>
+            </Link>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
             {VILLA_DETAILS.rooms.map((room) => (
-              <div key={room.id} className="group cursor-pointer">
+              <Link key={room.id} href="/the-villa" className="group cursor-pointer">
                 <div className="relative h-[500px] overflow-hidden mb-6">
                   <Image
                     src={room.image}
@@ -60,7 +61,7 @@ export default function Home() {
                   <div className="h-px w-8 bg-heritage-gold/30"></div>
                   <span className="group-hover:translate-x-2 transition-transform duration-300">Explore Room →</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { VILLA_DETAILS } from "@/constants/mockData";
 
@@ -31,9 +32,9 @@ export default function Narrative() {
               carved by master artisans in Mas village, carrying stories of generations past.
             </p>
           </div>
-          <button className="mt-10 border-b-2 border-heritage-gold text-heritage-charcoal font-serif text-xl pb-2 hover:text-heritage-gold transition-colors">
+          <Link href="/the-villa" className="mt-10 inline-block border-b-2 border-heritage-gold text-heritage-charcoal font-serif text-xl pb-2 hover:text-heritage-gold transition-colors">
             Explore the Architecture
-          </button>
+          </Link>
         </motion.div>
 
         {/* Story Image */}
