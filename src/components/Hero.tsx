@@ -9,15 +9,18 @@ export default function Hero() {
     <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
       {/* Background Video/Image */}
       <div className="absolute inset-0 z-0">
-        <video
+        <motion.video
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.6 }}
+          transition={{ duration: 1.5 }}
           autoPlay
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-60"
+          className="h-full w-full object-cover"
         >
           <source src={VILLA_DETAILS.heroVideo} type="video/mp4" />
-        </video>
+        </motion.video>
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-heritage-charcoal/80 via-transparent to-heritage-charcoal"></div>
       </div>
