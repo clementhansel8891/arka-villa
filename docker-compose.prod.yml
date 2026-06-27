@@ -1,7 +1,3 @@
-# ─── Arka Villa Management Platform — Production ─────────────
-# Deploy: docker compose up -d --build
-# Access: http://localhost:3100 (or server IP:3100)
-
 version: "3.9"
 
 services:
@@ -15,7 +11,7 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - JWT_SECRET=${JWT_SECRET:-arka-villa-jwt-secret-2026}
+      - JWT_SECRET=arka-villa-jwt-secret-2026-production
     depends_on:
       redis:
         condition: service_healthy

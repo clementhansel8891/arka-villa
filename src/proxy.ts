@@ -94,18 +94,14 @@ export async function proxy(request: NextRequest) {
   const session = await extractSessionFromCookie(request);
   const isAuthenticated = session !== null;
 
-  let rateLimitResult = { allowed: true, limit: 100, remaining: 99, retryAfter: 0 };
-  try {
-    const rateLimitConfig = getRateLimitConfig(pathname, isAuthenticated);
-    const rateLimitIdentifier = isAuthenticated
-      ? session.userId
-      : getClientIp(request);
-    const rateLimitType = isAuthenticated ? 'user' : 'ip';
-    const rateLimitKey = getRateLimitKey(rateLimitIdentifier, rateLimitType);
-    rateLimitResult = await checkRateLimit(redis, rateLimitKey, rateLimitConfig);
-  } catch {
-    // Redis unavailable — skip rate limiting (allow all requests)
-  }
+  const rateLimitConfig = getRateLimitConfig(pathname, isAuthenticated);
+  const rateLimitIdentifier = isAuthenticated
+    ? session.userId
+    : getClientIp(request);
+  const rateLimitType = isAuthenticated ? 'user' : 'ip';
+  const rateLimitKey = getRateLimitKey(rateLimitIdentifier, rateLimitType);
+
+  const rateLimitResult = await checkRateLimit(redis, rateLimitKey, rateLimitConfig);
 
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
@@ -128,21 +124,17 @@ export async function proxy(request: NextRequest) {
   // ─── Step 2: Tenant Resolution ──────────────────────────────
   let tenant: TenantContext | null = null;
 
-  try {
-    const subdomain = extractSubdomain(request.headers.get('host') ?? '');
-    if (subdomain) {
-      tenant = await resolveTenantFromSlug(redis, subdomain);
-    }
+  const subdomain = extractSubdomain(request.headers.get('host') ?? '');
+  if (subdomain) {
+    tenant = await resolveTenantFromSlug(redis, subdomain);
+  }
 
-    // Fallback: extract tenant from path for development
-    if (!tenant) {
-      const pathSlug = extractTenantFromPath(pathname);
-      if (pathSlug) {
-        tenant = await resolveTenantFromSlug(redis, pathSlug);
-      }
+  // Fallback: extract tenant from path for development
+  if (!tenant) {
+    const pathSlug = extractTenantFromPath(pathname);
+    if (pathSlug) {
+      tenant = await resolveTenantFromSlug(redis, pathSlug);
     }
-  } catch {
-    // Redis unavailable — skip tenant resolution
   }
 
   // ─── Step 3: JWT Validation ─────────────────────────────────
