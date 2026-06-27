@@ -39,11 +39,9 @@ import { redis } from './lib/db/redis';
  * whitelisted here — the client-side layout handles auth via localStorage.
  */
 function isPublicPath(pathname: string): boolean {
-  // In development, skip proxy auth for dashboard routes
-  // (client-side AuthContext handles access control)
-  const isDev = process.env.NODE_ENV === 'development';
-
-  if (isDev && (pathname.startsWith('/web/') || pathname.startsWith('/m/') || pathname === '/admin' || pathname.startsWith('/admin'))) {
+  // Dashboard routes are protected client-side via AuthContext/localStorage.
+  // The proxy allows them through — each layout checks auth and redirects if needed.
+  if (pathname.startsWith('/web/') || pathname.startsWith('/m/') || pathname.startsWith('/admin')) {
     return true;
   }
 
