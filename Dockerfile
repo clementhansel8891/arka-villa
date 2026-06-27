@@ -1,13 +1,12 @@
 # ─── Arka Villa Management Platform ───────────────────────────
 # Multi-stage Docker build for production deployment
-# Optimized for VPS deployment with standalone output
 
-# Stage 1: Install dependencies
+# Stage 1: Install ALL dependencies (needed for build)
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
@@ -15,13 +14,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 RUN npm run build
 
-# Stage 3: Production runtime
+# Stage 3: Production runtime (minimal)
 FROM node:20-alpine AS runner
 WORKDIR /app
 
