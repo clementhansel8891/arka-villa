@@ -5,6 +5,13 @@ import VillaShowcase from "@/components/home/VillaShowcase";
 import WhyBookWithUs from "@/components/home/WhyBookWithUs";
 import FeaturedExperiences from "@/components/home/FeaturedExperiences";
 import BookingCTA from "@/components/home/BookingCTA";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Arka Villa Management | Luxury Villas in Bali",
+  description: "Book handpicked luxury villas across Bali directly with the best rates. Premium villa management, concierge services, and direct booking. No middlemen.",
+  alternates: { canonical: "https://arka-villa.com" },
+};
 
 /**
  * Arka Villa Management Agency — Public Landing Page

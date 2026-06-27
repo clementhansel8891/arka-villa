@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import StructuredData from "./structured-data";
 
 const navLinks = [
   { label: "Home", href: "/villas/arka-villa" },
@@ -32,6 +33,9 @@ export default function ArkaVillaLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-stone-950">
+      {/* SEO: Structured Data */}
+      <StructuredData />
+
       {/* Navbar */}
       <nav
         className={cn(
