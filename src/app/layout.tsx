@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import PageTracker from "@/components/PageTracker";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,8 +17,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Arka Villa | Ultra-Luxury Bali Villa in Ubud",
-  description: "Experience the soul of Bali at Arka Villa — an ultra-exclusive luxury sanctuary in the heart of Ubud.",
+  title: "Arka Villa | Luxury Villa Management in Bali",
+  description: "Book handpicked luxury villas across Bali directly with the best rates. Managed by Arka Villa Management Agency.",
 };
 
 export default function RootLayout({
@@ -28,8 +30,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
         <AuthProvider>
-          {children}
-          <WhatsAppFloat />
+          <ThemeProvider>
+            <PageTracker />
+            {children}
+            <WhatsAppFloat />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

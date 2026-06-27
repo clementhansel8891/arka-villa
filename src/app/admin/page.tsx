@@ -1,11 +1,21 @@
-import Dashboard from "@/components/admin/Dashboard";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Admin Dashboard | Arka Villa",
-  description: "CEO-level analytics dashboard for Arka Villa villa operations.",
-};
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function AdminPage() {
-  return <Dashboard />;
+/**
+ * Legacy /admin route — redirects to the new agency dashboard.
+ */
+export default function AdminRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/web/agency");
+  }, [router]);
+
+  return (
+    <div className="min-h-screen bg-heritage-charcoal flex items-center justify-center">
+      <p className="text-white/30 text-xs uppercase tracking-widest">Redirecting to Agency Dashboard...</p>
+    </div>
+  );
 }

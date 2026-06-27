@@ -27,13 +27,16 @@ export default function Navbar() {
   }, [profileOpen]);
 
   const navLinks = [
-    { name: "The Villa", href: "/the-villa" },
-    { name: "Amenities", href: "/amenities" },
-    { name: "Story", href: "/#story" },
+    { name: "Villas", href: "/#villas" },
+    { name: "For Owners", href: "/for-owners" },
+    { name: "Careers", href: "/careers" },
     { name: "Contact", href: "/contact" },
   ];
 
   const isStaff = user && (user.role === "admin" || user.role === "staff");
+  const isAdmin = user && user.role === "admin";
+  const isStaffOnly = user && user.role === "staff";
+  const isOwner = user && user.role === "owner";
 
   return (
     <nav
@@ -51,6 +54,12 @@ export default function Navbar() {
             isScrolled ? "text-heritage-gold" : "text-white"
           )}>
             Arka Villa
+          </span>
+          <span className={cn(
+            "text-[9px] uppercase tracking-[0.3em] mt-1 hidden sm:inline",
+            isScrolled ? "text-white/40" : "text-white/30"
+          )}>
+            Management
           </span>
         </Link>
 
@@ -97,14 +106,36 @@ export default function Navbar() {
                       <p className="text-white/30 text-[10px] capitalize mt-0.5">{user.role}</p>
                     </div>
 
-                    {isStaff && (
+                    {isAdmin && (
                       <Link
-                        href="/admin"
+                        href="/web/agency"
                         onClick={() => setProfileOpen(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
                       >
                         <LayoutDashboard size={14} />
-                        Admin Dashboard
+                        Agency Dashboard
+                      </Link>
+                    )}
+
+                    {isStaffOnly && (
+                      <Link
+                        href="/web/staff"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        <LayoutDashboard size={14} />
+                        Staff Portal
+                      </Link>
+                    )}
+
+                    {isOwner && (
+                      <Link
+                        href="/web/owner"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        <LayoutDashboard size={14} />
+                        Owner Portal
                       </Link>
                     )}
 
@@ -177,9 +208,19 @@ export default function Navbar() {
           ))}
           {user ? (
             <>
-              {isStaff && (
-                <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-heritage-gold text-lg uppercase tracking-widest">
-                  Dashboard
+              {isAdmin && (
+                <Link href="/web/agency" onClick={() => setMobileMenuOpen(false)} className="text-heritage-gold text-lg uppercase tracking-widest">
+                  Agency Dashboard
+                </Link>
+              )}
+              {isStaffOnly && (
+                <Link href="/web/staff" onClick={() => setMobileMenuOpen(false)} className="text-heritage-gold text-lg uppercase tracking-widest">
+                  Staff Portal
+                </Link>
+              )}
+              {isOwner && (
+                <Link href="/web/owner" onClick={() => setMobileMenuOpen(false)} className="text-heritage-gold text-lg uppercase tracking-widest">
+                  Owner Portal
                 </Link>
               )}
               <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="text-white text-lg uppercase tracking-widest">

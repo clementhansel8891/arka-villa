@@ -1,0 +1,34 @@
+# Development overrides - use with:
+# docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  # In dev, run Next.js locally (not in Docker) and only use infrastructure services
+  nextjs:
+    profiles:
+      - production
+
+  nginx:
+    profiles:
+      - production
+
+  postgres:
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  redis:
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      redis-server
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+
+  minio:
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+
+  n8n:
+    ports:
+      - "${N8N_PORT:-5678}:5678"

@@ -2,19 +2,23 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { registerGuest } from "@/lib/auth";
+import { registerGuest, getDashboardRoute, resetAuthStore } from "@/lib/auth";
 import Link from "next/link";
+import { Suspense } from "react";
 
 type Tab = "login" | "register";
 
 const inputClass =
   "w-full bg-white/5 border border-white/10 text-white px-4 py-3.5 placeholder:text-white/20 focus:outline-none focus:border-heritage-gold transition-colors duration-200 text-sm";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [tab, setTab] = useState<Tab>("login");
+  const searchParams = useSearchParams();
+  const errorParam = searchParams.get("error");
+
   return (
     <div className="min-h-screen bg-heritage-charcoal flex items-center justify-center px-4 relative overflow-hidden">
       <div className="absolute inset-0 heritage-pattern opacity-30 pointer-events-none" />
@@ -27,8 +31,14 @@ export default function LoginPage() {
             <ArrowLeft size={12} /> Back to site
           </Link>
           <h1 className="text-4xl font-serif text-white mt-4">Arka Villa</h1>
-          <p className="text-heritage-gold text-xs uppercase tracking-[0.3em] mt-2">Ubud, Bali</p>
+          <p className="text-heritage-gold text-xs uppercase tracking-[0.3em] mt-2">Management Platform</p>
         </motion.div>
+
+        {errorParam === "unauthorized" && (
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 px-4 py-3 mb-4 text-center">
+            You don&apos;t have permission to access that page.
+          </motion.p>
+        )}
 
         {/* Tab Switcher */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex border border-white/10 mb-8">
@@ -51,16 +61,27 @@ export default function LoginPage() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <p className="text-center text-white/20 text-xs mt-8">Staff access is managed by the Arka Villa administration team.</p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-heritage-charcoal flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }
 
 function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -71,13 +92,35 @@ function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    // Reset auth store to ensure new accounts are available
+    resetAuthStore();
+
     const { error: err } = await login(email, password);
     setLoading(false);
     if (err) { setError(err); return; }
+
+    // Check if there's a redirect target
+    const from = searchParams.get("from");
+    if (from) {
+      router.push(from);
+      return;
+    }
+
+    // Route based on role
     const session = localStorage.getItem("hh_session");
     const user = session ? JSON.parse(session) : null;
-    if (user?.role === "guest") router.push("/profile");
-    else router.push("/admin");
+    if (user?.role) {
+      router.push(getDashboardRoute(user.role));
+    } else {
+      router.push("/");
+    }
+  };
+
+  const fillCredentials = (demoEmail: string, demoPw: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPw);
+    setError("");
   };
 
   return (
@@ -105,23 +148,40 @@ function LoginForm() {
         {loading ? <span className="w-4 h-4 border-2 border-heritage-charcoal border-t-transparent rounded-full animate-spin" /> : "Sign In"}
       </button>
 
-      {/* Demo credentials */}
-      <div className="border border-white/5 p-4 space-y-1.5 mt-4">
-        <p className="text-white/20 text-[9px] uppercase tracking-widest mb-3">Demo Accounts</p>
-        {[
-          { label: "Admin", email: "clement@arkavilla.com", pw: "admin123" },
-          { label: "Staff", email: "ketut@arkavilla.com", pw: "staff123" },
-          { label: "Guest", email: "james@example.com", pw: "guest123" },
-        ].map((d) => (
-          <button key={d.label} type="button" onClick={() => { setEmail(d.email); setPassword(d.pw); }}
-            className="w-full text-left text-xs text-white/30 hover:text-white/60 transition-colors flex justify-between items-center px-2 py-1.5 hover:bg-white/3">
-            <span className="text-heritage-gold/70 w-12">{d.label}</span>
-            <span className="flex-1 text-center">{d.email}</span>
-            <span className="text-white/20">{d.pw}</span>
-          </button>
-        ))}
+      {/* Demo accounts */}
+      <div className="border border-white/5 p-4 space-y-1 mt-4">
+        <p className="text-white/20 text-[9px] uppercase tracking-widest mb-3">Demo Accounts — click to fill</p>
+
+        <p className="text-white/10 text-[8px] uppercase tracking-wider mt-2 mb-1">Agency Admin → /web/agency</p>
+        <DemoRow label="CEO" email="clement@arkavilla.com" pw="admin123" onClick={fillCredentials} />
+        <DemoRow label="Ops Dir" email="ayu@arkavilla.com" pw="admin123" onClick={fillCredentials} />
+
+        <p className="text-white/10 text-[8px] uppercase tracking-wider mt-3 mb-1">Staff → /web/staff</p>
+        <DemoRow label="Butler" email="ketut@arkavilla.com" pw="staff123" onClick={fillCredentials} />
+        <DemoRow label="Marketing" email="kadek@arkavilla.com" pw="staff123" onClick={fillCredentials} />
+
+        <p className="text-white/10 text-[8px] uppercase tracking-wider mt-3 mb-1">Villa Owner → /web/owner</p>
+        <DemoRow label="Owner" email="robert@villaowner.com" pw="owner123" onClick={fillCredentials} />
+        <DemoRow label="Owner" email="sarah@villaowner.com" pw="owner123" onClick={fillCredentials} />
+
+        <p className="text-white/10 text-[8px] uppercase tracking-wider mt-3 mb-1">Guest → /profile</p>
+        <DemoRow label="Guest" email="james@example.com" pw="guest123" onClick={fillCredentials} />
       </div>
     </form>
+  );
+}
+
+function DemoRow({ label, email, pw, onClick }: { label: string; email: string; pw: string; onClick: (e: string, p: string) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onClick(email, pw)}
+      className="w-full text-left text-xs text-white/30 hover:text-white/60 transition-colors flex justify-between items-center px-2 py-1.5 hover:bg-white/5"
+    >
+      <span className="text-heritage-gold/60 w-16 shrink-0">{label}</span>
+      <span className="flex-1 text-center truncate">{email}</span>
+      <span className="text-white/15 shrink-0 ml-2">{pw}</span>
+    </button>
   );
 }
 

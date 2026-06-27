@@ -25,11 +25,31 @@
 :root {
   --background: #F5F1E6;
   --foreground: #121212;
+
+  /* Theme CSS custom properties — defaults (dark) applied here,
+     overridden by ThemeProvider at runtime via inline styles on <html> */
+  --theme-bg-primary: #121212;
+  --theme-bg-secondary: #1A1A1A;
+  --theme-bg-tertiary: #242424;
+  --theme-text-primary: #F5F1E6;
+  --theme-text-secondary: #D4C9B0;
+  --theme-text-muted: #9E9585;
+  --theme-border-primary: rgba(212, 175, 55, 0.2);
+  --theme-border-secondary: rgba(212, 175, 55, 0.1);
+  --theme-surface-primary: #1E1E1E;
+  --theme-surface-secondary: #2A2A2A;
+  --theme-surface-elevated: #333333;
+  --theme-accent-gold: #D4AF37;
+  --theme-accent-gold-hover: #E5C34B;
+  --theme-success: #4CAF50;
+  --theme-warning: #FF9800;
+  --theme-error: #F44336;
+  --theme-info: #2196F3;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }

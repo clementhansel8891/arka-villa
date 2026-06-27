@@ -3,7 +3,7 @@
 // localStorage-backed user management (no backend required)
 // ============================================================
 
-export type UserRole = "admin" | "staff" | "guest";
+export type UserRole = "admin" | "staff" | "owner" | "guest";
 
 export type User = {
   id: string;
@@ -17,6 +17,8 @@ export type User = {
   hourlyRate?: number;
   phone?: string;
   nationality?: string;
+  /** For owners: which villas they own */
+  villaIds?: string[];
 };
 
 export type ScheduleEntry = {
@@ -39,16 +41,29 @@ export type BookingRecord = {
 // ─── Seed Data ────────────────────────────────────────────────
 
 const DEFAULT_USERS: User[] = [
+  // ─── Agency Admin ───────────────────────────────────────────
   {
     id: "admin-001",
     name: "Clement Hansel",
     email: "clement@arkavilla.com",
     role: "admin",
-    position: "General Manager",
+    position: "CEO & Founder",
     department: "Management",
     startDate: "2019-03-01",
     hourlyRate: 95,
   },
+  {
+    id: "admin-002",
+    name: "Ayu Dewi",
+    email: "ayu@arkavilla.com",
+    role: "admin",
+    position: "Operations Director",
+    department: "Operations",
+    startDate: "2020-01-15",
+    hourlyRate: 85,
+  },
+
+  // ─── Staff ──────────────────────────────────────────────────
   {
     id: "staff-001",
     name: "Ketut Sastra",
@@ -90,6 +105,57 @@ const DEFAULT_USERS: User[] = [
     hourlyRate: 44,
   },
   {
+    id: "staff-005",
+    name: "Kadek Rina",
+    email: "kadek@arkavilla.com",
+    role: "staff",
+    position: "Digital Marketing Specialist",
+    department: "Marketing",
+    startDate: "2024-03-01",
+    hourlyRate: 48,
+  },
+  {
+    id: "staff-006",
+    name: "Putu Agung",
+    email: "putu@arkavilla.com",
+    role: "staff",
+    position: "Maintenance Supervisor",
+    department: "Maintenance",
+    startDate: "2021-11-01",
+    hourlyRate: 42,
+  },
+
+  // ─── Villa Owners ───────────────────────────────────────────
+  {
+    id: "owner-001",
+    name: "Robert Chen",
+    email: "robert@villaowner.com",
+    role: "owner",
+    phone: "+65 9123 4567",
+    nationality: "Singaporean",
+    villaIds: ["1", "4"],
+  },
+  {
+    id: "owner-002",
+    name: "Sarah Mitchell",
+    email: "sarah@villaowner.com",
+    role: "owner",
+    phone: "+61 412 345 678",
+    nationality: "Australian",
+    villaIds: ["2", "5"],
+  },
+  {
+    id: "owner-003",
+    name: "Hideo Nakamura",
+    email: "hideo@villaowner.com",
+    role: "owner",
+    phone: "+81 90 5678 1234",
+    nationality: "Japanese",
+    villaIds: ["3", "6"],
+  },
+
+  // ─── Guests ─────────────────────────────────────────────────
+  {
     id: "guest-001",
     name: "James Whitmore",
     email: "james@example.com",
@@ -113,79 +179,119 @@ const DEFAULT_USERS: User[] = [
     phone: "+55 11 99999 0000",
     nationality: "Brazilian",
   },
+  {
+    id: "guest-004",
+    name: "Alex Thompson",
+    email: "alex@example.com",
+    role: "guest",
+    phone: "+44 7891 234567",
+    nationality: "British",
+  },
 ];
 
 const DEFAULT_PASSWORDS: Record<string, string> = {
+  // Admins
   "clement@arkavilla.com": "admin123",
+  "ayu@arkavilla.com": "admin123",
+  // Staff
   "ketut@arkavilla.com": "staff123",
   "made@arkavilla.com": "staff123",
   "nyoman@arkavilla.com": "staff123",
   "wayan@arkavilla.com": "staff123",
+  "kadek@arkavilla.com": "staff123",
+  "putu@arkavilla.com": "staff123",
+  // Owners
+  "robert@villaowner.com": "owner123",
+  "sarah@villaowner.com": "owner123",
+  "hideo@villaowner.com": "owner123",
+  // Guests
   "james@example.com": "guest123",
   "yuki@example.com": "guest123",
   "maria@example.com": "guest123",
+  "alex@example.com": "guest123",
 };
 
 export const MOCK_SCHEDULES: Record<string, ScheduleEntry[]> = {
   "admin-001": [
-    { date: "2026-05-06", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-07", shift: "Morning", hours: 8, overtime: 2 },
-    { date: "2026-05-08", shift: "Afternoon", hours: 8, overtime: 0 },
-    { date: "2026-05-09", shift: "Off", hours: 0 },
-    { date: "2026-05-10", shift: "Morning", hours: 8, overtime: 1 },
-    { date: "2026-05-11", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-12", shift: "Off", hours: 0 },
+    { date: "2026-06-23", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-24", shift: "Morning", hours: 8, overtime: 2 },
+    { date: "2026-06-25", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-26", shift: "Off", hours: 0 },
+    { date: "2026-06-27", shift: "Morning", hours: 8, overtime: 1 },
+    { date: "2026-06-28", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-29", shift: "Off", hours: 0 },
   ],
   "staff-001": [
-    { date: "2026-05-06", shift: "Afternoon", hours: 8, overtime: 1 },
-    { date: "2026-05-07", shift: "Afternoon", hours: 8, overtime: 0 },
-    { date: "2026-05-08", shift: "Evening", hours: 8, overtime: 0 },
-    { date: "2026-05-09", shift: "Off", hours: 0 },
-    { date: "2026-05-10", shift: "Morning", hours: 8, overtime: 3 },
-    { date: "2026-05-11", shift: "Afternoon", hours: 8, overtime: 0 },
-    { date: "2026-05-12", shift: "Off", hours: 0 },
+    { date: "2026-06-23", shift: "Afternoon", hours: 8, overtime: 1 },
+    { date: "2026-06-24", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-25", shift: "Evening", hours: 8, overtime: 0 },
+    { date: "2026-06-26", shift: "Off", hours: 0 },
+    { date: "2026-06-27", shift: "Morning", hours: 8, overtime: 3 },
+    { date: "2026-06-28", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-29", shift: "Off", hours: 0 },
   ],
   "staff-002": [
-    { date: "2026-05-06", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-07", shift: "Off", hours: 0 },
-    { date: "2026-05-08", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-09", shift: "Afternoon", hours: 8, overtime: 1 },
-    { date: "2026-05-10", shift: "Evening", hours: 8, overtime: 0 },
-    { date: "2026-05-11", shift: "Off", hours: 0 },
-    { date: "2026-05-12", shift: "Morning", hours: 8, overtime: 2 },
+    { date: "2026-06-23", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-24", shift: "Off", hours: 0 },
+    { date: "2026-06-25", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-26", shift: "Afternoon", hours: 8, overtime: 1 },
+    { date: "2026-06-27", shift: "Evening", hours: 8, overtime: 0 },
+    { date: "2026-06-28", shift: "Off", hours: 0 },
+    { date: "2026-06-29", shift: "Morning", hours: 8, overtime: 2 },
   ],
   "staff-003": [
-    { date: "2026-05-06", shift: "Morning", hours: 10, overtime: 2 },
-    { date: "2026-05-07", shift: "Morning", hours: 10, overtime: 0 },
-    { date: "2026-05-08", shift: "Off", hours: 0 },
-    { date: "2026-05-09", shift: "Morning", hours: 10, overtime: 1 },
-    { date: "2026-05-10", shift: "Morning", hours: 10, overtime: 0 },
-    { date: "2026-05-11", shift: "Off", hours: 0 },
-    { date: "2026-05-12", shift: "Morning", hours: 10, overtime: 3 },
+    { date: "2026-06-23", shift: "Morning", hours: 10, overtime: 2 },
+    { date: "2026-06-24", shift: "Morning", hours: 10, overtime: 0 },
+    { date: "2026-06-25", shift: "Off", hours: 0 },
+    { date: "2026-06-26", shift: "Morning", hours: 10, overtime: 1 },
+    { date: "2026-06-27", shift: "Morning", hours: 10, overtime: 0 },
+    { date: "2026-06-28", shift: "Off", hours: 0 },
+    { date: "2026-06-29", shift: "Morning", hours: 10, overtime: 3 },
   ],
   "staff-004": [
-    { date: "2026-05-06", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-07", shift: "Afternoon", hours: 8, overtime: 0 },
-    { date: "2026-05-08", shift: "Morning", hours: 8, overtime: 1 },
-    { date: "2026-05-09", shift: "Afternoon", hours: 8, overtime: 0 },
-    { date: "2026-05-10", shift: "Off", hours: 0 },
-    { date: "2026-05-11", shift: "Morning", hours: 8, overtime: 0 },
-    { date: "2026-05-12", shift: "Afternoon", hours: 8, overtime: 2 },
+    { date: "2026-06-23", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-24", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-25", shift: "Morning", hours: 8, overtime: 1 },
+    { date: "2026-06-26", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-27", shift: "Off", hours: 0 },
+    { date: "2026-06-28", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-29", shift: "Afternoon", hours: 8, overtime: 2 },
+  ],
+  "staff-005": [
+    { date: "2026-06-23", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-24", shift: "Morning", hours: 8, overtime: 1 },
+    { date: "2026-06-25", shift: "Off", hours: 0 },
+    { date: "2026-06-26", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-27", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-28", shift: "Afternoon", hours: 8, overtime: 2 },
+    { date: "2026-06-29", shift: "Off", hours: 0 },
+  ],
+  "staff-006": [
+    { date: "2026-06-23", shift: "Morning", hours: 8, overtime: 1 },
+    { date: "2026-06-24", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-25", shift: "Afternoon", hours: 8, overtime: 0 },
+    { date: "2026-06-26", shift: "Morning", hours: 8, overtime: 2 },
+    { date: "2026-06-27", shift: "Off", hours: 0 },
+    { date: "2026-06-28", shift: "Morning", hours: 8, overtime: 0 },
+    { date: "2026-06-29", shift: "Off", hours: 0 },
   ],
 };
 
 export const MOCK_GUEST_BOOKINGS: Record<string, BookingRecord[]> = {
   "guest-001": [
-    { id: "AV-0201", suite: "Royal Heritage Suite", checkIn: "2025-12-20", checkOut: "2025-12-25", nights: 5, total: 6000, status: "Completed" },
-    { id: "AV-0228", suite: "Jungle Horizon Villa", checkIn: "2026-03-10", checkOut: "2026-03-13", nights: 3, total: 2850, status: "Completed" },
-    { id: "AV-0241", suite: "Royal Heritage Suite", checkIn: "2026-06-15", checkOut: "2026-06-20", nights: 5, total: 6000, status: "Confirmed" },
+    { id: "AV-0201", suite: "Arka Villa (Royal Suite)", checkIn: "2025-12-20", checkOut: "2025-12-25", nights: 5, total: 2250, status: "Completed" },
+    { id: "AV-0228", suite: "Villa Tropicana", checkIn: "2026-03-10", checkOut: "2026-03-13", nights: 3, total: 1560, status: "Completed" },
+    { id: "AV-0241", suite: "Arka Villa (Pool Villa)", checkIn: "2026-07-15", checkOut: "2026-07-20", nights: 5, total: 2250, status: "Confirmed" },
   ],
   "guest-002": [
-    { id: "AV-0242", suite: "Sacred Lotus Pavilion", checkIn: "2026-05-20", checkOut: "2026-05-27", nights: 7, total: 5250, status: "Confirmed" },
+    { id: "AV-0242", suite: "Villa Serenity", checkIn: "2026-06-20", checkOut: "2026-06-27", nights: 7, total: 2660, status: "Confirmed" },
   ],
   "guest-003": [
-    { id: "AV-0235", suite: "Jungle Horizon Villa", checkIn: "2026-04-01", checkOut: "2026-04-05", nights: 4, total: 3800, status: "Completed" },
-    { id: "AV-0243", suite: "Sacred Lotus Pavilion", checkIn: "2026-07-10", checkOut: "2026-07-15", nights: 5, total: 3750, status: "Confirmed" },
+    { id: "AV-0235", suite: "Villa Harmony", checkIn: "2026-04-01", checkOut: "2026-04-05", nights: 4, total: 1280, status: "Completed" },
+    { id: "AV-0243", suite: "Villa Coral", checkIn: "2026-08-10", checkOut: "2026-08-15", nights: 5, total: 3400, status: "Confirmed" },
+  ],
+  "guest-004": [
+    { id: "AV-0250", suite: "Villa Jade", checkIn: "2026-07-01", checkOut: "2026-07-07", nights: 6, total: 1740, status: "Pending" },
   ],
 };
 
@@ -215,6 +321,16 @@ function getPasswords(): Record<string, string> {
 }
 
 function savePasswords(passwords: Record<string, string>): void { localStorage.setItem(PASSWORDS_KEY, JSON.stringify(passwords)); }
+
+/**
+ * Forces a reset of the localStorage users/passwords to the latest defaults.
+ * Call this when you need to ensure new accounts are available after an update.
+ */
+export function resetAuthStore(): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(USERS_KEY, JSON.stringify(DEFAULT_USERS));
+  localStorage.setItem(PASSWORDS_KEY, JSON.stringify(DEFAULT_PASSWORDS));
+}
 
 // ─── Auth Functions ───────────────────────────────────────────
 
@@ -261,10 +377,23 @@ export function updateUserData(id: string, updates: Partial<User>): User | null 
 }
 
 export function getAllStaff(): User[] { return getUsers().filter((u) => u.role === "admin" || u.role === "staff"); }
+export function getAllOwners(): User[] { return getUsers().filter((u) => u.role === "owner"); }
 export function getAllGuests(): User[] { return getUsers().filter((u) => u.role === "guest"); }
 export function getUserById(id: string): User | undefined { return getUsers().find((u) => u.id === id); }
 export function getScheduleForUser(userId: string): ScheduleEntry[] { return MOCK_SCHEDULES[userId] ?? []; }
 export function getBookingsForGuest(userId: string): BookingRecord[] { return MOCK_GUEST_BOOKINGS[userId] ?? []; }
+
+/**
+ * Returns the appropriate dashboard route for a given role.
+ */
+export function getDashboardRoute(role: UserRole): string {
+  switch (role) {
+    case "admin": return "/web/agency";
+    case "staff": return "/web/staff";
+    case "owner": return "/web/owner";
+    case "guest": return "/profile";
+  }
+}
 
 export function computeWageSummary(userId: string) {
   const user = getUserById(userId);
